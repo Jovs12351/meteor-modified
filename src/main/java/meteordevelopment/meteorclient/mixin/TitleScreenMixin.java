@@ -5,6 +5,7 @@
 
 package meteordevelopment.meteorclient.mixin;
 
+import meteordevelopment.meteorclient.gui.screens.UpdateLogScreen;
 import meteordevelopment.meteorclient.systems.config.Config;
 import meteordevelopment.meteorclient.utils.player.TitleScreenCredits;
 import net.minecraft.client.gui.Click;
@@ -14,6 +15,7 @@ import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -21,8 +23,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(TitleScreen.class)
 public abstract class TitleScreenMixin extends Screen {
+    @Unique
+    private static boolean updateChecked = false;
+
     public TitleScreenMixin(Text title) {
         super(title);
+    }
+
+    @Inject(method = "init", at = @At("TAIL"))
+    private void onInit(CallbackInfo ci) {
+        if (!updateChecked && Config.get().checkForUpdates.get()) {
+            updateChecked = true;
+            UpdateLogScreen.checkAndShow();
+        }
     }
 
     @Inject(method = "render", at = @At("TAIL"))
@@ -37,3 +50,4 @@ public abstract class TitleScreenMixin extends Screen {
         }
     }
 }
+

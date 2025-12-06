@@ -96,6 +96,13 @@ public class Config extends System<Config> {
         .build()
     );
 
+    public final Setting<Boolean> checkForUpdates = sgVisual.add(new BoolSetting.Builder()
+        .name("check-for-updates")
+        .description("Show a popup notification when a new update is available from GitHub.")
+        .defaultValue(true)
+        .build()
+    );
+
     // Modules
 
     public final Setting<List<Module>> hiddenModules = sgModules.add(new ModuleListSetting.Builder()
